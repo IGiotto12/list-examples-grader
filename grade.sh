@@ -21,15 +21,15 @@ cp -r lib grading-area
 
 cd grading-area
 
-if [ -f ListExamples.java ]
+if ! [ -f ListExamples.java ]
 then 
     echo "Missing ListExamples.java in student submission"
     echo "Score: 0"
     exit
 fi 
 
-javac $CPATH
-if []
+javac -cp $CPATH *.java &> compile.txt
+if [ $? -ne 0 ]
 then 
     echo "Compile Error"
     echo "Score: 0"
@@ -39,11 +39,13 @@ fi
 javac -cp $CPATH:. TestListExamples.java
 java -cp $CPATH:.org.junit.runner.JUnitCore TestListExamples > testResult.txt
 
-if [find -Stirng ]
+grep "failure" testResult.txt > count.txt
+if [ -s count.txt ]
 then 
-    echo "Test"
-    echo 
-
+    echo "Test not passed"
+    echo "Scores: 0"
+    exit
+fi
 
 echo "All Tests passed!"
 echo "Scores: 1/1"
